@@ -1,277 +1,125 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DEDAMORFEY | Система</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body, html {
-      height: 100vh;
-      overflow: hidden;
-      background: #000;
-      color: #00ff41;
-      font-family: 'Courier New', monospace;
-      cursor: none;
-    }
-    canvas#matrix { position: absolute; top:0; left:0; z-index:1; }
-    canvas#holo { position: absolute; bottom: 40px; right: 40px; z-index: 5; width: 280px; height: 280px; pointer-events: none; }
+<meta charset="UTF-8">
+<title>DEDAMORFEY | Система</title>
+<style>
+    body, html { margin:0; padding:0; overflow:hidden; background:#000; font-family:'Courier New', monospace; color:#0f0; }
+    #deda { position:fixed; top:0; left:0; right:0; bottom:0; background:linear-gradient(#111,#000); display:flex; align-items:center; justify-content:center; flex-direction:column; z-index:10; transition:opacity 1.8s; }
+    h1 { font-size:6rem; letter-spacing:12px; margin:0; text-shadow:0 0 30px #0f0; }
+    .status { font-size:1.6rem; margin:20px 0; color:#0f0; text-shadow:0 0 10px #0f0; }
+    button { margin-top:40px; padding:18px 50px; font-size:1.8rem; background:transparent; color:#f00; border:3px solid #f00; cursor:pointer; transition:all 0.4s; text-transform:uppercase; }
+    button:hover { background:#f00; color:#000; box-shadow:0 0 40px #f00; }
     
-    .content {
-      position: relative; z-index: 10;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      pointer-events: none;
-    }
-    h1 {
-      font-size: 5.8rem;
-      letter-spacing: 15px;
-      text-transform: uppercase;
-      text-shadow: 0 0 20px #00ff41, 0 0 40px #00ff41;
-      pointer-events: all;
-      cursor: none;
-      user-select: none;
-    }
-    h1:hover { animation: glitch 0.3s linear infinite; }
-    @keyframes glitch {
-      0% { transform: translate(0); }
-      20% { transform: translate(-3px, 3px); }
-      40% { transform: translate(-3px, -3px); }
-      60% { transform: translate(3px, 3px); }
-      80% { transform: translate(3px, -3px); }
-      100% { transform: translate(0); }
-    }
-    .pill {
-      margin-top: 50px;
-      padding: 18px 60px;
-      font-size: 1.5rem;
-      background: transparent;
-      color: #00ff41;
-      border: 3px solid #00ff41;
-      text-transform: uppercase;
-      letter-spacing: 8px;
-      cursor: pointer;
-      pointer-events: all;
-      transition: all 0.4s ease;
-      box-shadow: 0 0 25px #00ff41;
-    }
-    .pill:hover {
-      background: #00ff41;
-      color: #000;
-      box-shadow: 0 0 50px #00ff41, 0 0 70px #ff00ff;
-      transform: scale(1.12);
-    }
-    .subtitle { margin-top: 30px; font-size: 1.2rem; opacity: 0.75; letter-spacing: 6px; }
-
-    /* Кастомный курсор */
-    .cursor {
-      position: absolute;
-      width: 16px; height: 16px;
-      border: 1px solid #00ff41;
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 999;
-      box-shadow: 0 0 15px #00ff41;
-      mix-blend-mode: difference;
-    }
-
-    /* GLITCH ПЕРЕХОД */
-    #glitchOverlay {
-      position: fixed; top:0; left:0; width:100%; height:100%;
-      z-index: 1000;
-      background: transparent;
-      pointer-events: none;
-      opacity: 0;
-      display: none;
-    }
-    #glitchOverlay.active {
-      animation: fullGlitch 1.2s linear forwards;
-    }
-    @keyframes fullGlitch {
-      0%   { opacity: 0; }
-      10%  { opacity: 1; filter: hue-rotate(90deg); }
-      20%  { filter: hue-rotate(180deg) invert(1); }
-      40%  { filter: hue-rotate(270deg); }
-      60%  { filter: contrast(200%) brightness(150%); }
-      80%  { opacity: 1; }
-      100% { opacity: 0; }
-    }
-  </style>
+    canvas { position:fixed; top:0; left:0; z-index:5; }
+    
+    #terminal { position:fixed; top:0; left:0; right:0; bottom:0; background:#000; display:none; flex-direction:column; z-index:20; }
+    #output { flex:1; padding:40px; overflow-y:auto; font-size:1.35rem; line-height:1.7; }
+    #input-line { padding:20px 40px; font-size:1.5rem; display:flex; align-items:center; }
+    #cursor { animation:blink 0.8s infinite; }
+    @keyframes blink { 50% {opacity:0;} }
+</style>
 </head>
 <body>
 
-  <canvas id="matrix"></canvas>
-  <canvas id="holo"></canvas>
-
-  <div class="content">
+<!-- Твоя страница DEDAMORFEY -->
+<div id="deda">
     <h1>DEDAMORFEY</h1>
-    <div class="subtitle">СИСТЕМА АКТИВИРОВАНА • УРОВЕНЬ 99%</div>
-    <button class="pill" onclick="takePill()">ПРИНЯТЬ КРАСНУЮ ТАБЛЕТКУ</button>
-  </div>
+    <div class="status">СИСТЕМА АКТИВИРОВАНА • УРОВЕНЬ 99%</div>
+    <button onclick="takeRedPill()">ПРИНЯТЬ КРАСНУЮ ТАБЛЕТКУ</button>
+</div>
 
-  <div class="cursor" id="customCursor"></div>
-  <div id="glitchOverlay"></div>
+<canvas id="canvas"></canvas>
 
-  <script>
-    // MATRIX RAIN (оставляем прежний)
-    const canvas = document.getElementById('matrix');
-    const ctx = canvas.getContext('2d');
-    let w = canvas.width = window.innerWidth;
-    let h = canvas.height = window.innerHeight;
-    const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const fontSize = 14;
-    const columns = Math.floor(w / fontSize);
-    const drops = new Array(columns).fill(1);
+<!-- Терминал Оракула -->
+<div id="terminal">
+    <div id="output"></div>
+    <div id="input-line">
+        <span style="color:#0f0">&gt;</span>
+        <input type="text" id="userInput" autocomplete="off" style="background:none;border:none;color:#0f0;font-family:inherit;font-size:inherit;flex:1;outline:none;">
+        <span id="cursor" style="color:#0f0">█</span>
+    </div>
+</div>
 
-    function drawMatrix() {
-      ctx.fillStyle = 'rgba(0,0,0,0.05)';
-      ctx.fillRect(0,0,w,h);
-      ctx.fillStyle = '#00ff41';
-      ctx.font = `${fontSize}px monospace`;
-      for (let i = 0; i < drops.length; i++) {
-        const text = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > h && Math.random() > 0.975) drops[i] = 0;
+<script>
+// Matrix Rain
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const chars = '01ネオモーフィウスDEDAMORFEYАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+const fontSize = 16;
+const columns = canvas.width / fontSize;
+const drops = Array(Math.floor(columns)).fill(1);
+
+function draw() {
+    ctx.fillStyle = 'rgba(0,0,0,0.06)';
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = '#0f0';
+    ctx.font = fontSize + 'px monospace';
+    for(let i=0; i<drops.length; i++){
+        const text = chars[Math.floor(Math.random()*chars.length)];
+        ctx.fillText(text, i*fontSize, drops[i]*fontSize);
+        if(drops[i]*fontSize > canvas.height && Math.random()>0.975) drops[i]=0;
         drops[i]++;
-      }
     }
-    setInterval(drawMatrix, 35);
+}
+setInterval(draw, 35);
 
-    // THREE.JS Голографический объект
-    const holoCanvas = document.getElementById('holo');
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, 280/280, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: holoCanvas, alpha: true, antialias: true });
-    renderer.setSize(280, 280);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+// Принять красную таблетку
+function takeRedPill() {
+    document.getElementById('deda').style.opacity = '0';
+    setTimeout(() => {
+        document.getElementById('deda').style.display = 'none';
+        document.getElementById('terminal').style.display = 'flex';
+        
+        addLine("Красная таблетка принята.", 600);
+        setTimeout(() => addLine("Добро пожаловать в реальность, Нео.", 1400), 800);
+        setTimeout(() => addLine("Теперь ты внутри. Задавай вопросы.", 1200), 2200);
+    }, 1800);
+}
 
-    const geometry = new THREE.TorusKnotGeometry(70, 25, 128, 32);
-    const material = new THREE.MeshPhongMaterial({
-      color: 0x00ff41,
-      emissive: 0x00ff41,
-      emissiveIntensity: 0.8,
-      shininess: 100,
-      wireframe: true,
-      transparent: true,
-      opacity: 0.9
-    });
-    const knot = new THREE.Mesh(geometry, material);
-    scene.add(knot);
-
-    const light = new THREE.PointLight(0x00ff41, 2, 500);
-    light.position.set(100, 100, 100);
-    scene.add(light);
-    scene.add(new THREE.AmbientLight(0x112211, 0.6));
-
-    camera.position.z = 220;
-
-    let mouseX = 0, mouseY = 0;
-    let targetRotationY = 0, targetRotationX = 0;
-
-    function animateHolo() {
-      requestAnimationFrame(animateHolo);
-      knot.rotation.y += 0.008;
-      knot.rotation.x += 0.004;
-      
-      // Следим за мышью
-      knot.rotation.y = THREE.MathUtils.lerp(knot.rotation.y, targetRotationY, 0.1);
-      knot.rotation.x = THREE.MathUtils.lerp(knot.rotation.x, targetRotationX, 0.1);
-      
-      renderer.render(scene, camera);
-    }
-    animateHolo();
-
-    document.addEventListener('mousemove', (e) => {
-      mouseX = (e.clientX / window.innerWidth) * 2 - 1;
-      mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
-      targetRotationY = mouseX * 1.2;
-      targetRotationX = mouseY * 0.8;
-    });
-
-    // АУДИО СЛОЙ
-    let audioContext;
-    let humOscillator, gainNode;
-    function initAudio() {
-      if (audioContext) return;
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      
-      // Низкий гул Матрицы
-      humOscillator = audioContext.createOscillator();
-      humOscillator.type = 'sine';
-      humOscillator.frequency.setValueAtTime(82, audioContext.currentTime);
-      gainNode = audioContext.createGain();
-      gainNode.gain.value = 0.07; // тихо
-      humOscillator.connect(gainNode).connect(audioContext.destination);
-      humOscillator.start();
-      
-      // Редкие цифровые щелчки
-      setInterval(() => {
-        if (Math.random() > 0.7) {
-          const click = audioContext.createOscillator();
-          click.frequency.setValueAtTime(800 + Math.random()*1200, audioContext.currentTime);
-          const clickGain = audioContext.createGain();
-          clickGain.gain.value = 0.15;
-          clickGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.08);
-          click.connect(clickGain).connect(audioContext.destination);
-          click.start();
-          click.stop(audioContext.currentTime + 0.1);
+function addLine(text, delay=0) {
+    setTimeout(() => {
+        const out = document.getElementById('output');
+        const line = document.createElement('div');
+        line.innerHTML = text;
+        out.appendChild(line);
+        out.scrollTop = out.scrollHeight;
+        
+        // Голос Морфиуса
+        if('speechSynthesis' in window){
+            const speak = new SpeechSynthesisUtterance(text);
+            speak.lang = 'ru-RU';
+            speak.pitch = 0.85;
+            speak.rate = 0.92;
+            speechSynthesis.speak(speak);
         }
-      }, 420);
+    }, delay);
+}
+
+// Ввод
+const input = document.getElementById('userInput');
+input.addEventListener('keypress', e => {
+    if(e.key === 'Enter' && input.value.trim()){
+        const q = input.value.trim();
+        addLine(`&gt; ${q}`);
+        setTimeout(() => {
+            const replies = [
+                "Следуй за белым кроликом...",
+                "Матрица повсюду, Нео.",
+                "Выбор уже сделан. Теперь ты должен жить с ним.",
+                "Я могу показать тебе дверь. Ты должен пройти через неё сам.",
+                "Ты — Избранный. Или ещё нет?"
+            ];
+            addLine(replies[Math.floor(Math.random()*replies.length)]);
+        }, 700);
+        input.value = '';
     }
+});
 
-    // КЛИК ПО ТАБЛЕТКЕ — ВЗРЫВ
-    window.takePill = function() {
-      initAudio(); // запускаем звук
-      
-      const pill = document.querySelector('.pill');
-      pill.style.transition = 'all 0.6s';
-      pill.style.transform = 'scale(0.6)';
-      pill.style.opacity = '0';
-
-      // Взрыв голограммы
-      knot.scale.set(1.8, 1.8, 1.8);
-      setTimeout(() => { knot.scale.set(0.1, 0.1, 0.1); }, 200);
-
-      // Glitch переход
-      const overlay = document.getElementById('glitchOverlay');
-      overlay.style.display = 'block';
-      overlay.classList.add('active');
-
-      // Финальный звук взлома
-      setTimeout(() => {
-        const explosion = audioContext.createOscillator();
-        explosion.frequency.setValueAtTime(120, audioContext.currentTime);
-        const expGain = audioContext.createGain();
-        expGain.gain.value = 0.4;
-        expGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.6);
-        explosion.connect(expGain).connect(audioContext.destination);
-        explosion.start();
-        explosion.stop(audioContext.currentTime + 0.7);
-      }, 300);
-
-      setTimeout(() => {
-        window.location.href = "dashboard.html";
-      }, 1200);
-    };
-
-    // Кастомный курсор
-    const cursor = document.getElementById('customCursor');
-    document.addEventListener('mousemove', e => {
-      cursor.style.left = e.clientX + 'px';
-      cursor.style.top = e.clientY + 'px';
-      initAudio(); // звук после первого движения
-    });
-
-    // Адаптация
-    window.addEventListener('resize', () => {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
-    });
-  </script>
+window.addEventListener('resize', ()=>{ canvas.width=window.innerWidth; canvas.height=window.innerHeight; });
+</script>
 </body>
 </html>
