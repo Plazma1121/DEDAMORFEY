@@ -16,79 +16,114 @@
     canvas { position: absolute; top: 0; left: 0; z-index: 1; }
 
     .container {
-      position: relative; z-index: 10; text-align: center; padding: 40px; max-width: 860px;
+      position: relative; z-index: 10; text-align: center; padding: 40px; max-width: 900px;
     }
 
     h1 {
-      font-size: 5.2rem;
+      font-size: 5.8rem;
       margin: 0 0 10px 0;
-      text-shadow: 0 0 30px #0f0, 0 0 60px #0f0;
-      animation: glitch 1.8s infinite;
-      letter-spacing: 6px;
+      text-shadow: 0 0 40px #0f0, 0 0 80px #0f0, 0 0 120px #0f0;
+      animation: glitch 1.5s infinite;
+      letter-spacing: 8px;
     }
 
     .subtitle {
-      font-size: 2.6rem;
-      color: #ff3333;
-      margin-bottom: 50px;
-      text-shadow: 0 0 25px #ff0000;
+      font-size: 2.8rem;
+      color: #ff2222;
+      margin-bottom: 60px;
+      text-shadow: 0 0 30px #ff0000;
+      animation: subtitle-glow 3s infinite alternate;
     }
 
     .pill {
-      width: 220px; height: 220px; margin: 40px auto 50px;
-      background: radial-gradient(circle at 40% 30%, #ff2222, #aa0000);
+      width: 240px; height: 240px; margin: 40px auto 60px;
+      background: radial-gradient(circle at 40% 30%, #ff1a1a, #880000);
       border-radius: 50%;
-      box-shadow: 0 0 100px #ff0000, 0 0 200px #ff0000, inset 0 0 70px rgba(255,255,255,0.7);
-      cursor: pointer; transition: all 0.6s ease; position: relative;
-      animation: pulse-red 2.5s infinite;
+      box-shadow: 
+        0 0 120px #ff0000,
+        0 0 240px #ff0000,
+        inset 0 0 80px rgba(255,255,255,0.8);
+      cursor: pointer; 
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      position: relative;
+      animation: pill-pulse 2.2s infinite;
+      z-index: 10;
     }
 
     .pill:hover {
-      transform: scale(1.28) rotate(10deg);
-      box-shadow: 0 0 160px #ff0000, 0 0 320px #ff0000;
+      transform: scale(1.35) rotate(15deg);
+      box-shadow: 
+        0 0 180px #ff0000,
+        0 0 360px #ff0000,
+        inset 0 0 100px rgba(255,255,255,0.9);
     }
 
     .pill::after {
       content: "КРАСНАЯ ТАБЛЕТКА";
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      font-size: 1.6rem; color: #000; font-weight: bold; text-shadow: none;
+      font-size: 1.7rem; color: #000; font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
     }
 
     .text {
-      font-size: 1.9rem;
-      line-height: 1.6;
-      max-width: 780px;
-      margin: 0 auto 50px;
-      color: #0f0;
+      font-size: 2rem;
+      line-height: 1.65;
+      max-width: 820px;
+      margin: 0 auto 60px;
+      text-shadow: 0 0 15px #0f0;
     }
 
     .tg-button {
       display: inline-block;
-      padding: 20px 60px;
-      font-size: 2.1rem;
-      background: #00cc00;
+      padding: 22px 70px;
+      font-size: 2.3rem;
+      background: linear-gradient(45deg, #00cc00, #00ff44);
       color: #000;
-      border: 5px solid #0f0;
+      border: 6px solid #0f0;
       text-decoration: none;
-      box-shadow: 0 0 50px #0f0;
-      transition: all 0.4s;
+      box-shadow: 0 0 60px #0f0, 0 0 120px #0f0;
+      transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
       font-weight: bold;
+      position: relative;
+      overflow: hidden;
+      z-index: 10;
     }
 
     .tg-button:hover {
-      background: #00ff00;
-      transform: scale(1.08);
-      box-shadow: 0 0 80px #0f0;
+      transform: scale(1.12) translateY(-8px);
+      box-shadow: 0 0 100px #0f0, 0 0 200px #0f0;
+      background: linear-gradient(45deg, #00ff00, #44ff88);
+    }
+
+    .tg-button::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 40%; height: 200%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.6), transparent);
+      transform: skewX(-25deg);
+      animation: shine 4s infinite;
     }
 
     @keyframes glitch {
-      0%,100% { text-shadow: 5px 0 #0f0, -5px 0 #ff0000; }
-      50% { text-shadow: -5px 0 #0f0, 5px 0 #ff0000; }
+      0%,100% { text-shadow: 6px 0 #0f0, -6px 0 #ff0000; }
+      50% { text-shadow: -6px 0 #0f0, 6px 0 #ff0000; }
     }
 
-    @keyframes pulse-red {
-      0%,100% { box-shadow: 0 0 100px #ff0000, 0 0 200px #ff0000; }
-      50% { box-shadow: 0 0 160px #ff0000, 0 0 320px #ff0000; }
+    @keyframes subtitle-glow {
+      from { text-shadow: 0 0 20px #ff0000; }
+      to { text-shadow: 0 0 50px #ff0000, 0 0 80px #ff0000; }
+    }
+
+    @keyframes pill-pulse {
+      0%,100% { box-shadow: 0 0 120px #ff0000, 0 0 240px #ff0000; }
+      50% { box-shadow: 0 0 200px #ff0000, 0 0 400px #ff0000; }
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-150%) skewX(-25deg); }
+      20% { transform: translateX(300%) skewX(-25deg); }
+      100% { transform: translateX(300%) skewX(-25deg); }
     }
   </style>
 </head>
@@ -102,10 +137,10 @@
     <div class="pill" id="redpill"></div>
     
     <p class="text">
-      Устал пахать на систему?<br>
-      Хочешь нормальную работу без обмана?<br><br>
-      Я — Дедушка Морфиус.<br>
-      Прими красную таблетку — и я устрою тебя на работу.<br>
+      Устал от серой Матрицы?<br>
+      Хочешь настоящую работу и свободу?<br><br>
+      Прими красную таблетку.<br>
+      Я устрою тебя ко мне.<br>
       <strong>Казахстан • Россия</strong>
     </p>
 
@@ -124,7 +159,7 @@
     const drops = Array(Math.floor(columns)).fill(1);
 
     function draw() {
-      ctx.fillStyle = 'rgba(0,0,0,0.07)';
+      ctx.fillStyle = 'rgba(0,0,0,0.065)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#0f0';
       ctx.font = `${fontSize}px VT323`;
@@ -138,8 +173,15 @@
     }
     setInterval(draw, 33);
 
+    // Улучшенный клик по таблетке
     document.getElementById('redpill').addEventListener('click', () => {
-      window.location.href = 'https://t.me/PLAZmaMatr1x';
+      const pill = document.getElementById('redpill');
+      pill.style.transition = 'all 0.8s';
+      pill.style.transform = 'scale(0.7) rotate(360deg)';
+      
+      setTimeout(() => {
+        window.location.href = 'https://t.me/PLAZmaMatr1x';
+      }, 600);
     });
 
     window.addEventListener('resize', () => {
