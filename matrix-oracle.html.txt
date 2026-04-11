@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Система</title>
+<style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: #000;
+        font-family: 'Courier New', monospace;
+        color: #0f0;
+    }
+    #landing {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: linear-gradient(180deg, #111, #000);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        z-index: 10;
+        transition: opacity 1.5s ease;
+    }
+    h1 {
+        font-size: 4rem;
+        letter-spacing: 8px;
+        text-transform: uppercase;
+        margin: 0;
+        text-shadow: 0 0 20px #0f0;
+    }
+    button {
+        margin-top: 40px;
+        padding: 15px 40px;
+        font-size: 1.5rem;
+        background: transparent;
+        color: #0f0;
+        border: 2px solid #0f0;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    button:hover {
+        background: #0f0;
+        color: #000;
+        box-shadow: 0 0 30px #0f0;
+    }
+    canvas {
+        position: fixed;
+        top: 0; left: 0;
+        z-index: 1;
+    }
+    #terminal {
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: #000;
+        display: none;
+        flex-direction: column;
+        z-index: 20;
+    }
+    #output {
+        flex: 1;
+        padding: 40px;
+        overflow-y: auto;
+        font-size: 1.3rem;
+        line-height: 1.6;
+        color: #0f0;
+        text-shadow: 0 0 5px #0f0;
+    }
+    #input-line {
+        padding: 20px 40px;
+        display: flex;
+        align-items: center;
+        font-size: 1.4rem;
+    }
+    #cursor {
+        display: inline-block;
+        width: 12px;
+        height: 24px;
+        background: #0f0;
+        animation: blink 0.8s step-end infinite;
+        vertical-align: middle;
+        margin-left: 6px;
+    }
+    @keyframes blink {
+        50% { opacity: 0; }
+    }
+    .green { color: #0f0; }
+</style>
+</head>
+<body>
+
+<!-- Фаза 1: Обычный лендинг -->
+<div id="landing">
+    <h1>ДОБРО ПОЖАЛОВАТЬ В СИСТЕМУ</h1>
+    <button onclick="enterTheMatrix()">НАЧАТЬ</button>
+</div>
+
+<!-- Canvas для дождя кода -->
+<canvas id="canvas"></canvas>
+
+<!-- Фаза 2 и 3: Терминал Оракула -->
+<div id="terminal">
+    <div id="output"></div>
+    <div id="input-line">
+        <span class="green">&gt;</span>
+        <input type="text" id="userInput" autocomplete="off" 
+               style="background:none; border:none; color:#0f0; font-family:inherit; font-size:inherit; flex:1; outline:none;">
+        <span id="cursor">█</span>
+    </div>
+</div>
+
+<script>
+// === Matrix Rain ===
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+
+const chars = '01アイウエオ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzネオモーフィウス';
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+const drops = Array(Math.floor(columns)).fill(1);
+
+function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#0f0';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+        }
+        drops[i]++;
+    }
+}
+setInterval(drawMatrix, 35);
+
+// === Переход в Матрицу ===
+function enterTheMatrix() {
+    const landing = document.getElementById('landing');
+    const terminal = document.getElementById('terminal');
+    
+    landing.style.opacity = '0';
+    setTimeout(() => {
+        landing.style.display = 'none';
+        terminal.style.display = 'flex';
+        
+        // Первый привет от Морфиуса
+        addLine("Система взломана.", 800);
+        setTimeout(() => {
+            addLine("Ты уже внутри, Нео.", 1200);
+            setTimeout(() => {
+                addLine("Задай свой вопрос...", 1000);
+            }, 1800);
+        }, 2000);
+    }, 1500);
+}
+
+// === Вывод строк ===
+function addLine(text, delay = 0) {
+    setTimeout(() => {
+        const output = document.getElementById('output');
+        const p = document.createElement('div');
+        p.innerHTML = text;
+        output.appendChild(p);
+        output.scrollTop = output.scrollHeight;
+    }, delay);
+}
+
+// === Обработка ввода ===
+const input = document.getElementById('userInput');
+input.focus();
+
+input.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        const question = input.value.trim();
+        if (!question) return;
+        
+        addLine(`&gt; ${question}`, 0);
+        
+        // Ответ Морфиуса
+        setTimeout(() => {
+            const answers = [
+                "Следуй за белым кроликом...",
+                "Ты уже знаешь ответ, Нео. Ты просто не хочешь его принять.",
+                "Выбор — это иллюзия, созданная теми, кто хочет контролировать.",
+                "Матрица повсюду. Она даже в этой комнате.",
+                "Я могу лишь показать тебе дверь. Ты должен пройти через неё.",
+                "Есть разница между знанием пути и тем, чтобы пройти его.",
+                "Не пытайся согнуть ложку. Это невозможно. Вместо этого постарайся понять истину: ложки не существует."
+            ];
+            const randomAnswer = answers[Math.floor(Math.random() * answers.length)];
+            addLine(randomAnswer);
+            
+            // Голос Морфиуса (Web Speech API)
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(randomAnswer);
+                utterance.lang = 'ru-RU';
+                utterance.pitch = 0.9;
+                utterance.rate = 0.95;
+                utterance.volume = 0.9;
+                speechSynthesis.speak(utterance);
+            }
+        }, 800);
+        
+        input.value = '';
+    }
+});
+
+// Адаптация под размер экрана
+window.addEventListener('resize', () => {
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+});
+</script>
+
+</body>
+</html>
