@@ -6,7 +6,50 @@
     <title>ДЕДУШКА МОРФИУС • ВЫБОР ТАБЛЕТКИ</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+        /* === СИНЯЯ ТАБЛЕТКА === */
+        .pill-button {
+            display: block;
+            margin: 40px auto;
+            padding: 28px 90px;
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+            letter-spacing: 4px;
+            min-width: 520px;
+        }
 
+        .red-pill {
+            background: linear-gradient(#c00, #800);
+            color: #fff;
+            box-shadow: 0 0 50px #f00;
+        }
+
+        .red-pill:hover {
+            background: linear-gradient(#f00, #c00);
+            box-shadow: 0 0 70px #f00;
+            transform: scale(1.08);
+        }
+
+        .blue-pill {
+            background: linear-gradient(#0088ff, #0044aa);
+            color: #fff;
+            box-shadow: 0 0 50px #00aaff;
+        }
+
+        .blue-pill:hover {
+            background: linear-gradient(#00ccff, #0088ff);
+            box-shadow: 0 0 70px #00ccff;
+            transform: scale(1.08);
+        }
+
+        .pill-text {
+            text-shadow: 0 0 15px rgba(255,255,255,0.9);
+        }
         body {
             margin: 0;
             padding: 0;
@@ -160,5 +203,26 @@
         // Лёгкий эффект зелёного дождя (по желанию можно усилить)
         console.log("%cСледуй за белым кроликом...", "color:#0f0; font-size:16px;");
     </script>
+        <!-- Синяя таблетка - функция -->
+    <script>
+        function takeBluePill() {
+            alert("Ты принял синюю таблетку...\n\nТеперь ты останешься в Матрице.\nНо хотя бы с автомобилем.");
+
+            document.body.style.transition = "all 2.5s";
+            document.body.style.filter = "invert(1) hue-rotate(180deg)";
+
+            setTimeout(() => {
+                document.body.innerHTML = `
+                    <div style="position:fixed;top:0;left:0;width:100%;height:100%;background:#001122;color:#88ccff;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:42px;text-align:center;padding:40px;">
+                        <h1>ТЫ ВЫБРАЛ КОМФОРТ</h1>
+                        <p style="font-size:32px;margin:40px 0 20px;">Автомобиль уже ждёт тебя в симуляции.</p>
+                        <p style="font-size:26px;color:#4488ff;">Добро пожаловать обратно в Матрицу, Нео.</p>
+                    </div>
+                `;
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
 </body>
 </html>
