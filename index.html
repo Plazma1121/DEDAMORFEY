@@ -3,164 +3,145 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ДЕДУШКА МОРФИУС • ВЫБОР ТАБЛЕТКИ</title>
+    <title>ДЕДУШКА МОРФИУС</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
         body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            background: #000;
+            margin: 0; padding: 0; height: 100%; overflow: hidden;
+            background: #000; color: #0f0;
             font-family: 'VT323', monospace;
-            color: #0f0;
         }
 
-        #matrix-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            opacity: 0.85;
+        #matrix {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 1; opacity: 0.9;
         }
 
         .morpheus-bg {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('https://i.imgur.com/5z3kL8P.jpg') center/cover no-repeat; /* Морфиус */
-            z-index: 2;
-            opacity: 0.45;
-            mix-blend-mode: screen;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('https://i.imgur.com/5z3kL8P.jpg') center/cover no-repeat;
+            z-index: 2; opacity: 0.55; mix-blend-mode: screen;
+        }
+
+        .grok-logo {
+            position: fixed; bottom: 30px; left: 40px;
+            z-index: 30; opacity: 0.85;
+            display: flex; align-items: center; gap: 12px;
+        }
+
+        .grok-logo img {
+            height: 48px; filter: drop-shadow(0 0 12px #0f0);
+        }
+
+        .grok-text {
+            font-size: 1.6rem; color: #0f0; text-shadow: 0 0 15px #0f0;
+            white-space: nowrap;
         }
 
         .content {
-            position: relative;
-            z-index: 10;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 20px;
+            position: relative; z-index: 10; height: 100vh;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center; padding: 20px;
         }
 
         h1 {
-            font-size: 5.5rem;
-            text-shadow: 0 0 30px #0f0;
-            margin: 0 0 10px;
-            letter-spacing: 8px;
+            font-size: 6rem; margin: 0 0 10px; text-shadow: 0 0 30px #0f0, 0 0 60px #0f0;
+            color: #0f0; letter-spacing: 10px;
         }
 
         .subtitle {
-            font-size: 2.4rem;
-            color: #0a0;
-            margin-bottom: 70px;
+            font-size: 2.8rem; color: #0a0; margin-bottom: 40px; text-shadow: 0 0 20px #0f0;
+        }
+
+        .lazung {
+            font-size: 1.8rem; line-height: 1.4; margin: 15px 0; max-width: 900px;
             text-shadow: 0 0 15px #0f0;
         }
 
         .pill-container {
-            display: flex;
-            flex-direction: column;
-            gap: 50px;
-            z-index: 20;
+            display: flex; flex-direction: column; gap: 40px; margin: 50px 0; z-index: 20;
         }
 
         .pill-button {
-            padding: 30px 100px;
-            font-size: 29px;
-            font-weight: bold;
-            text-transform: uppercase;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            box-shadow: 0 0 60px rgba(0,0,0,0.95);
-            letter-spacing: 5px;
-            min-width: 560px;
-            position: relative;
-            z-index: 30;
+            padding: 32px 110px; font-size: 32px; font-weight: bold;
+            text-transform: uppercase; border: none; border-radius: 50px;
+            cursor: pointer; transition: all 0.4s; box-shadow: 0 0 60px rgba(0,0,0,0.95);
+            letter-spacing: 6px; min-width: 620px;
         }
 
         .red-pill {
-            background: linear-gradient(#c00, #800);
-            color: #fff;
-            box-shadow: 0 0 60px #f00;
+            background: linear-gradient(#c00, #800); color: #fff;
+            box-shadow: 0 0 70px #f00;
         }
-
-        .red-pill:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 80px #f00;
-        }
+        .red-pill:hover { transform: scale(1.08); box-shadow: 0 0 90px #f00; }
 
         .blue-pill {
-            background: linear-gradient(#0088ff, #0044aa);
-            color: #fff;
-            box-shadow: 0 0 60px #00aaff;
+            background: linear-gradient(#0088ff, #0044aa); color: #fff;
+            box-shadow: 0 0 70px #00aaff;
         }
+        .blue-pill:hover { transform: scale(1.08); box-shadow: 0 0 90px #00ccff; }
 
-        .blue-pill:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 80px #00ccff;
+        .telegram-btn {
+            margin-top: 60px; padding: 20px 80px; font-size: 28px;
+            background: #00ff00; color: #000; border: none; border-radius: 10px;
+            cursor: pointer; font-weight: bold; box-shadow: 0 0 40px #0f0;
+            text-transform: uppercase; letter-spacing: 4px;
         }
-
-        .pill-text {
-            text-shadow: 0 0 20px rgba(255,255,255,0.9);
-        }
-
-        .footer {
-            position: absolute;
-            bottom: 40px;
-            font-size: 1.4rem;
-            color: #040;
-            z-index: 20;
+        .telegram-btn:hover {
+            background: #00cc00; transform: scale(1.05); box-shadow: 0 0 60px #0f0;
         }
     </style>
 </head>
 <body>
 
-    <!-- Водопад из кода Матрицы -->
-    <canvas id="matrix-canvas"></canvas>
-
-    <!-- Фон с Морфиусом -->
+    <canvas id="matrix"></canvas>
     <div class="morpheus-bg"></div>
+
+    <!-- Логотип GROK внизу слева -->
+    <div class="grok-logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Logo_Grok_AI_%282025%29.png" alt="Grok xAI">
+        <div class="grok-text">Powered by GROK • xAI</div>
+    </div>
 
     <div class="content">
         <h1>ДЕДУШКА МОРФИУС</h1>
-        <p class="subtitle">Выбери свою судьбу</p>
+        <p class="subtitle">ПРОСНИСЬ, СЫНОК</p>
+
+        <div class="lazung">Устал от серой Матрицы?</div>
+        <div class="lazung">Хочешь настоящую работу и свободу?</div>
+        <div class="lazung" style="color:#ff0;">Прими красную таблетку — я устрою тебя ко мне.</div>
+        <div class="lazung">Казахстан • Россия • Реальная работа</div>
 
         <div class="pill-container">
             <button onclick="takeRedPill()" class="pill-button red-pill">
-                <span class="pill-text">ПРИМИ КРАСНУЮ ТАБЛЕТКУ</span>
+                КРАСНАЯ ТАБЛЕТКА
             </button>
 
             <button onclick="takeBluePill()" class="pill-button blue-pill">
-                <span class="pill-text">ЕСЛИ У ТЕБЯ ЕСТЬ АВТОМОБИЛЬ — ПРИМИ СИНЮЮ</span>
+                ЕСЛИ У ТЕБЯ ЕСТЬ АВТОМОБИЛЬ — ПРИМИ СИНЮЮ
             </button>
         </div>
+
+        <button onclick="goTelegram()" class="telegram-btn">
+            → ПИСАТЬ ДЕДУШКЕ В TELEGRAM ←
+        </button>
     </div>
 
-    <div class="footer">Следуй за белым кроликом...</div>
-
     <script>
-        // === НАСТОЯЩИЙ MATRIX RAIN ===
-        const canvas = document.getElementById('matrix-canvas');
+        // Водопад из кода Матрицы
+        const canvas = document.getElementById('matrix');
         const ctx = canvas.getContext('2d');
-
         canvas.height = window.innerHeight;
         canvas.width = window.innerWidth;
 
         const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワン0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        const fontSize = 14;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+        const fontSize = 16;
+        let columns = canvas.width / fontSize;
+        let drops = Array(Math.floor(columns)).fill(1);
 
         function draw() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.07)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = '#0f0';
             ctx.font = fontSize + 'px monospace';
@@ -169,29 +150,32 @@
                 const text = chars[Math.floor(Math.random() * chars.length)];
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
-                }
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
                 drops[i]++;
             }
         }
-
         setInterval(draw, 35);
 
         window.addEventListener('resize', () => {
             canvas.height = window.innerHeight;
             canvas.width = window.innerWidth;
+            columns = canvas.width / fontSize;
+            drops = Array(Math.floor(columns)).fill(1);
         });
 
-        // === Функции таблеток ===
+        // Функции таблеток
         function takeRedPill() {
             window.location.href = "https://t.me/PLAZmaMatr1x";
         }
 
         function takeBluePill() {
-            if (confirm("Ты уверен, Нео?\n\nСиняя таблетка оставит тебя в Матрице...\nНо хотя бы с автомобилем.\n\nПерейти к Дедушке?")) {
+            if (confirm("Синяя таблетка оставит тебя в комфортной Матрице...\nНо хотя бы с автомобилем.\n\nВсё равно хочешь писать Дедушке?")) {
                 window.location.href = "https://t.me/PLAZmaMatr1x";
             }
+        }
+
+        function goTelegram() {
+            window.location.href = "https://t.me/PLAZmaMatr1x";
         }
     </script>
 </body>
